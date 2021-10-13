@@ -1,6 +1,6 @@
 program = "application" "{" decllist ";" cmpdstmt "}"
 
-decllist = declaration ";" | declaration ";" decllist
+decllist = declaration | declaration ";" decllist
 
 declaration = identifier ":" type 
 
@@ -10,7 +10,7 @@ type1 = "boolean" | "char" | "int" | "double" | "string"
 
 arraydecl = "array" "[" constant "]" "of" type1
 
-cmpdstmt = "{" stmtlist "}"
+cmpdstmt = stmtlist
 
 stmtlist = stmt ";" | stmt ";" stmtlist
 
@@ -34,7 +34,7 @@ ifstmt = "if" "(" condition ")" "{" stmt "}" [ "else" "{" stmt "}" ]
 
 whilestmt = "while" "(" condition ")" "{" stmt "}"
 
-forstmt = "for" "(" identifier ";" condition ";" expression ")" "{" stmt "}"  ///// assignment instead of expression
+forstmt = "for" "(" identifier ";" condition ";" assignstmt ")" "{" stmt "}"
 
 condition = expression relation expression
 
