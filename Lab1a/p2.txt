@@ -1,0 +1,15 @@
+Gcd of 2 numbers
+
+
+application{
+	a:int; b:int;
+	read(a); read(b);
+	while(a != b){
+		if(a > b){
+			a := a-b;
+		} else{
+			b := b-a;
+		}
+	}
+	write(a);
+}

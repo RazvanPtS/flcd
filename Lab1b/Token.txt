@@ -1,0 +1,6 @@
+- operators + - * / := < <= = >= !=
+
+- separators [ ] { } ( ) : ; space 
+
+- reserved words
+  array char const do else if int of program read write for while then var double boolean string

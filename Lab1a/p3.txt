@@ -1,0 +1,12 @@
+Sum of n<100 numbers
+
+application{
+	arrayInt : array[100] of int; n:int; index:int; sum:int;
+	read(n);
+	index := 0;
+	sum := 0;
+	for(index; index <n; index := index +1){
+		sum := sum + array[index];
+	}
+	write(sum);
+}
