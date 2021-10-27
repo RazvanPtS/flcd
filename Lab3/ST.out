@@ -1,0 +1,11 @@
+Symbol table - implemented as a hash table composed of a HashMap with the key
+equal to the hashing value of the identifier and the value consisting of a list
+made up by all the identifiers that have the same hashing value;
+In ST.out only the index of the HashMap(the hashing value) is shown
+(hashvalue) => identifier
+97 => a; 
+98 => b; 
+108114 => min; 
+99 => c; 
+3063469 => cst1; 
+98820 => cst; 

@@ -1,0 +1,14 @@
+matchIdentifier = ("\\b[a-zA-z][a-zA-Z0-9_]*\\b"); -  begins with a letter followed by letters, digits and '_';
+(?<=[+\\-*/(:=)<(<=)=(>=)(!=)\\[\\]{}\\(\\):; ])|(?=[+\\-*/(:=)<(<=)=(>=)(!=)\\[\\]{}\\(\\):; ]) - regex for splitting
+lines of code (takes words and includes the separators in the final list);
+stringConstant = ("\"[a-zA-Z0-9]*\""); - accepts letters and digits inside double-quotes
+integerConstant = ("0|[\\+-]?[1-9]+[0-9]*"); - 0 or optional sign followed by a number which can't start with 0
+doubleConstant = ("0|[\\+-]?[1-9]+[0-9]*(\\.[0-9]+)?"); - integer pattern followed by optional comma and digits
+
+For analyzing, the lines are read, whitespaces are removed, and they're split by operators; The algorithm checks after
+splitting if there are any composite operators (>=, :=, etc.) or if there are constants with a sign and corrects the
+result of the split. Afterwards, each token is categorized (operator, keyword, identifier etc.); if the token is an operator/
+keyword/separator/constant(value) it is added to PIF with indexes 0, if the token is an identifier/constant(identifier)
+it is added to ST(which returns the index of the element) and the identifier/constant is added to PIF with the returned
+indexes.
+Lexical error is computed by counting the number of new lines if a token doesn't match any pattern

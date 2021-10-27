@@ -1,6 +1,6 @@
 https://github.com/RazvanPtS/flcd
 
-Symbol table implements as a hash table composed of a HashMap with the key
+Symbol table - implemented as a hash table composed of a HashMap with the key
 equal to the hashing value of the identifier and the value consisting of a list
 made up by all the identifiers that have the same hashing value;
 STKey is a class that wraps the indexes in which the identifier can be found
