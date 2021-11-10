@@ -1,0 +1,16 @@
+RazvanPtS/flcd (github.com)
+FA = "M=("allStates","alphabet","transitions","initialStates","finalStates")"
+allStates = elementList
+alphabet = elementList
+transitions = "{"transition{","transition}"}"
+transition = "("string","string")->"string"
+initialStates = elementList
+finalStates = elementList
+elementList = "{"string{","string}"}"
+string = """char{char}"""
+char = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z"
+
+
+Code : recursively parse for each state all states in which we can go next and return true if
+we parsed the given string or false if the current character is not in the alphabet or if the
+chosen states did not arrive to a final state
