@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Grammar {
@@ -14,7 +15,8 @@ public class Grammar {
     private List<String> initialStates = new ArrayList<>();
     private List<String> terminals = new ArrayList<>();
     private List<Production> productions = new ArrayList<>();
-
+    private HashMap<String, ArrayList<String>> first = new HashMap<>();
+    private HashMap<String, ArrayList<String>> follow = new HashMap<>();
     public Grammar(List<String> allStates, List<String> alph, List<Production> functions, List<String> initialStates) {
         this.nonTerminals = allStates;
         this.initialStates = initialStates;
@@ -22,6 +24,21 @@ public class Grammar {
         this.productions = functions;
     }
 
+    public HashMap<String, ArrayList<String>> getFirst(){
+        return this.first;
+    }
+
+    public HashMap<String, ArrayList<String>> getFollow(){
+        return this.follow;
+    }
+
+    public void setFirst(HashMap<String, ArrayList<String>> res){
+        this.first = res;
+    }
+
+    public void setFollow(HashMap<String, ArrayList<String>> res){
+        this.follow = res;
+    }
     public List<String> getInitialStates() {
         return nonTerminals;
     }

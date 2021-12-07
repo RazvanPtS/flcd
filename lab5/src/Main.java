@@ -1,11 +1,14 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.management.MemoryPoolMXBean;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main {
+
+    private static String epsilon = "ε";
 
     public static void main(String[] args) throws FileNotFoundException {
         Grammar grammar = readGrammar();
@@ -36,7 +39,7 @@ public class Main {
                     getFirst(grammar);
                     break;
                 case "8":
-                    //getFollow(grammar);
+                    getFollow(grammar);
                     break;
                 case "0":
                     return;
@@ -46,31 +49,57 @@ public class Main {
         }
     }
 
-    private static void getFirst(Grammar grammar) {
-        Map<String, List<String>> first = new HashMap<>();
-        List<String> terminals = grammar.getTerminals();
-
-        //init
-
-        terminals.forEach(terminal->
-            first.put(terminal, List.of(terminal)));
-
-        grammar.getNonTerminals().forEach(nonT->{
-            List<Production> productions = grammar.getProductions().stream().filter(pr->pr.getInitState().equals(nonT)).collect(Collectors.toList());
-            for(Production p : productions) {
-                String finalP = p.getFinalState();
-                for (int i = 0; i < finalP.length(); i++) {
-                    if (terminals.contains(String.valueOf(finalP.charAt(i)))) {
-                        first.put(nonT, List.of(String.valueOf(finalP.charAt(i))));
-                        break;
-                    }
-                }
-                if (!first.containsKey(nonT)) {
-                    first.put(nonT, List.of());
-                }
+    private static ArrayList<String> findAllTerminals(Grammar g, String nonT){
+        ArrayList<String> result = new ArrayList<>();
+        List<Production> productions = g.getProductions().stream().
+                filter(p->p.getInitState().equals(nonT)).collect(Collectors.toList());
+        productions.forEach(p->{
+            String firstSymbol = String.valueOf(p.getFinalState().charAt(0));
+            if(g.getTerminals().contains(firstSymbol)){
+                result.add(firstSymbol);
+            }
+            else if(g.getNonTerminals().contains(firstSymbol)){
+                result.addAll(findAllTerminals(g, firstSymbol));
+            }
+            else if(epsilon.equals(firstSymbol)){
+                result.add(epsilon);
             }
         });
+        return result;
+    }
+
+    private static void getFirst(Grammar grammar) {
+        HashMap<String, ArrayList<String>> first = new HashMap<>();
+        List<String> terminals = grammar.getTerminals();
+        terminals.forEach(terminal->
+            first.put(terminal, new ArrayList(List.of(terminal))));
+        grammar.getNonTerminals().forEach(nonT->
+            first.put(nonT, findAllTerminals(grammar, nonT)));
+        grammar.setFirst(first);
         first.forEach((k,v)->System.out.println(k+"->"+v));
+    }
+
+    private static void getFollow(Grammar grammar){
+        HashMap<String, List<String>> follow = new HashMap<>();
+        List<String> nonTerminals = grammar.getNonTerminals();
+        List<Production> productions = grammar.getProductions();
+        nonTerminals.forEach(nonT->{
+            productions.forEach(pr->{
+                int start = 0;
+                int nonTIndex = pr.getFinalState().indexOf(nonT, start);
+                while(nonTIndex != -1 && nonTIndex < pr.getFinalState().length()-1){
+                    if(!follow.containsKey(nonT)){
+                        follow.put(nonT, grammar.getFirst().get(String.valueOf(pr.getFinalState().charAt(nonTIndex+1))));
+                    }
+                    else{
+                        follow.get(nonT).addAll(grammar.getFirst().get(String.valueOf(pr.getFinalState().charAt(nonTIndex+1))));
+                    }
+                    start = nonTIndex+1;
+                    nonTIndex = pr.getFinalState().indexOf(nonT, start);
+                }
+            });
+        });
+        follow.forEach((k, v)->System.out.println(k+"->"+v));
     }
 
     private static boolean checkCFG(Grammar grammar) {
@@ -122,7 +151,7 @@ public class Main {
         while(matcher.find()){
             elements.add(matcher.group(1));
         }
-        Pattern function = Pattern.compile("(.*?)->([^,]+)");
+        Pattern function = Pattern.compile("([^, ]+)->([^, ]+)");
         List<Production> productions = new ArrayList<>();
         Matcher m = function.matcher(elements.get(2));
         while(m.find()) {
