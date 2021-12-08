@@ -1,1 +1,1 @@
-G=({S,T,C},{a,b},{S->aSbSa,T->Ca, C->ε}, {S})
+G=({S,T},{a,b},{S->TSbSa,T->a, T->b}, {S})

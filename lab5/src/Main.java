@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 public class Main {
 
     private static String epsilon = "ε";
+    private static String $ = "$";
 
     public static void main(String[] args) throws FileNotFoundException {
         Grammar grammar = readGrammar();
@@ -40,6 +41,8 @@ public class Main {
                     break;
                 case "8":
                     getFollow(grammar);
+                case "9":
+                    constructParsingTable(grammar);
                     break;
                 case "0":
                     return;
@@ -47,6 +50,42 @@ public class Main {
             System.out.println("1-Non-terminals\n2-Terminals\n3-productions\n4-initial states\n5-Productions for non-terminal\n6-CFG check\n7-FIRST\n8-FOLLOW\n0-exit");
             in = input.nextLine();
         }
+    }
+
+    private static void constructParsingTable(Grammar g){
+        if(g.getFollow().isEmpty()){
+            getFollow(g);
+        }
+        HashMap<Pair<String, String>, Pair<String, Integer>> pT = new HashMap<>();
+        List<Production> productions = g.getProductions();
+        for(int i=0; i<productions.size(); i++){
+            String lhs = productions.get(i).getInitState();
+            String rhs = productions.get(i).getFinalState();
+            String first = String.valueOf(rhs.charAt(0));
+            int finalI = i;
+            if(first.equals(epsilon))
+                continue;
+            g.getFirst().get(first).forEach(fV->{
+                    if(!fV.equals(epsilon))
+                        if(!pT.containsKey(new Pair<>(lhs, fV)))
+                            pT.put(new Pair<>(lhs, fV), new Pair<>(first, finalI+1));
+            });
+            if(g.getFirst().get(first).contains(epsilon)){
+                int finalI1 = i;
+                g.getFollow().get(lhs).forEach(fV->{
+                    pT.put(new Pair<>(lhs, fV), new Pair<>(first, finalI1+1));
+                });
+            }
+        }
+        g.getTerminals().forEach(t->{
+            pT.put(new Pair<>(t,t), new Pair<>("pop", -1));
+        });
+        pT.put(new Pair<>($,$), new Pair<>("acc", -1));
+        System.out.println(("Parsing table ///////"));
+        pT.forEach((k,v)->{
+            System.out.printf("(%s, %s)=(%s, %s)%n", k.first, k.second, v.first, v.second);
+        });
+        g.setParsingTable(pT);
     }
 
     private static ArrayList<String> findAllTerminals(Grammar g, String nonT){
@@ -76,11 +115,14 @@ public class Main {
         grammar.getNonTerminals().forEach(nonT->
             first.put(nonT, findAllTerminals(grammar, nonT)));
         grammar.setFirst(first);
+        System.out.println("First() ///////");
         first.forEach((k,v)->System.out.println(k+"->"+v));
     }
 
     private static void getFollow(Grammar grammar){
-        HashMap<String, List<String>> follow = new HashMap<>();
+        HashMap<String, ArrayList<String>> follow = new HashMap<>();
+        if(grammar.getFirst().isEmpty())
+            getFirst(grammar);
         List<String> nonTerminals = grammar.getNonTerminals();
         List<Production> productions = grammar.getProductions();
         nonTerminals.forEach(nonT->{
@@ -99,6 +141,13 @@ public class Main {
                 }
             });
         });
+        grammar.getNonTerminals().forEach(nT->{
+            if(!follow.containsKey(nT)){
+                follow.put(nT, new ArrayList<>(List.of()));
+            }
+        });
+        grammar.setFollow(follow);
+        System.out.println("Follow ///////");
         follow.forEach((k, v)->System.out.println(k+"->"+v));
     }
 

@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class Grammar {
     public List<String> getNonTerminals() {
         return nonTerminals;
@@ -17,6 +18,8 @@ public class Grammar {
     private List<Production> productions = new ArrayList<>();
     private HashMap<String, ArrayList<String>> first = new HashMap<>();
     private HashMap<String, ArrayList<String>> follow = new HashMap<>();
+    private HashMap<Pair<String, String>, Pair<String, Integer>> parsingTable = new HashMap<>();
+
     public Grammar(List<String> allStates, List<String> alph, List<Production> functions, List<String> initialStates) {
         this.nonTerminals = allStates;
         this.initialStates = initialStates;
@@ -61,5 +64,13 @@ public class Grammar {
 
     public void setProductions(List<Production> functions) {
         this.productions = functions;
+    }
+
+    public HashMap<Pair<String, String>, Pair<String, Integer>> getParsingTable() {
+        return parsingTable;
+    }
+
+    public void setParsingTable(HashMap<Pair<String, String>, Pair<String, Integer>> parsingTable) {
+        this.parsingTable = parsingTable;
     }
 }
