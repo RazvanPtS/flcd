@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Pair<T,K>{
     public T first;
     public K second;
@@ -13,5 +15,10 @@ public class Pair<T,K>{
             return p.first.equals(this.first) && p.second.equals(this.second);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second);
     }
 }
